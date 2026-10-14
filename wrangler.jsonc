@@ -1,0 +1,19 @@
+// Publicação na Cloudflare (Workers com arquivos estáticos). Só serve o que o `npm run build` gera:
+// não há código rodando no servidor nem banco de dados.
+{
+  "name": "politica-sem-gritos",
+  "compatibility_date": "2026-10-14",
+  "assets": {
+    "directory": "./dist/politica-sem-gritos/browser"
+  },
+  // Sem log de cada visita: ele guardaria cabeçalhos e dados de rede de quem lê o site.
+  "observability": {
+    "enabled": false
+  },
+  // O domínio e o www apontam para este site. A Cloudflare cria o DNS e o certificado na publicação;
+  // só funciona com o domínio já ativo na conta.
+  "routes": [
+    { "pattern": "politicasemgrito.com.br", "custom_domain": true },
+    { "pattern": "www.politicasemgrito.com.br", "custom_domain": true }
+  ]
+}
