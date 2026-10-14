@@ -17,6 +17,11 @@ O `build` já gera o HTML pronto (pré-renderização), o que faz a prévia do l
 funcionar no WhatsApp e nas redes. A pasta `dist/politica-sem-gritos/browser` pode ir para
 qualquer hospedagem de site estático (Netlify, Vercel, Cloudflare Pages, GitHub Pages).
 
+O site no ar, em politicasemgrito.com.br, sai pela Cloudflare: o `wrangler.jsonc` diz qual pasta
+publicar e liga o domínio e o www. Com o repositório conectado na Cloudflare (Workers Builds),
+cada mudança que entra na `main` publica sozinha em cerca de um minuto, com build `npm run build`
+e deploy `npx wrangler deploy`.
+
 O teste usa um navegador sem janela. No Windows sem Chrome instalado, aponte para o
 Edge antes de rodar: `CHROME_BIN="C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"`.
 
