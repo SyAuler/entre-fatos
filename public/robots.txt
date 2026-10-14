@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://politicasemgrito.com.br/sitemap.xml
