@@ -1,0 +1,947 @@
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#inicio">Política sem <span>Gritos</span></a>
+    <nav aria-label="Seções">
+      <!-- no celular aparecem os nomes curtos, para os cinco caberem sem rolagem -->
+      <a href="#hoje"><span class="long">Como estamos hoje</span><span class="short">Hoje</span></a>
+      <a href="#comparar"
+        ><span class="long">Comparar propostas</span><span class="short">Propostas</span></a
+      >
+      <a href="#congresso"
+        ><span class="long">Quem decide</span><span class="short">Congresso</span></a
+      >
+      <a href="#historico"><span class="long">Os dados</span><span class="short">Dados</span></a>
+      <a href="#metodo"
+        ><span class="long">Como lemos os fatos</span><span class="short">Método</span></a
+      >
+    </nav>
+  </div>
+</header>
+
+<section
+  id="inicio"
+  class="carousel"
+  aria-roledescription="carrossel"
+  aria-label="Destaques"
+  (mouseenter)="paused.set(true)"
+  (mouseleave)="paused.set(false)"
+  (focusin)="paused.set(true)"
+  (focusout)="paused.set(false)"
+>
+  @for (s of slides; track s.id; let i = $index) {
+    <div
+      [class]="'slide ' + s.id + ' ' + s.tone"
+      [class.active]="i === slide()"
+      [attr.inert]="i === slide() ? null : ''"
+      role="group"
+      aria-roledescription="slide"
+      [attr.aria-label]="i + 1 + ' de ' + slides.length"
+    >
+      <div
+        class="slide-bg"
+        [style.background-image]="'url(' + s.image + ')'"
+        [style.background-position]="s.position"
+      ></div>
+      <div class="slide-text">
+        <p class="kicker">{{ s.kicker }}</p>
+        <h1>{{ s.title }}</h1>
+        <p class="lead">{{ s.text }}</p>
+        <a class="cta" [href]="s.href">{{ s.cta }} →</a>
+      </div>
+      @if (s.credit) {
+        <a class="credit" [href]="s.creditUrl" target="_blank" rel="noopener">{{ s.credit }}</a>
+      }
+    </div>
+  }
+
+  <button class="arrow prev" (click)="go(slide() - 1)" aria-label="Destaque anterior">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6" /></svg>
+  </button>
+  <button class="arrow next" (click)="go(slide() + 1)" aria-label="Próximo destaque">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6" /></svg>
+  </button>
+  <div class="dots">
+    <button
+      class="play"
+      (click)="autoplay.set(!autoplay())"
+      [attr.aria-label]="
+        autoplay()
+          ? 'Pausar a troca automática dos destaques'
+          : 'Retomar a troca automática dos destaques'
+      "
+      [attr.aria-pressed]="!autoplay()"
+    >
+      @if (autoplay()) {
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6v12M16 6v12" /></svg>
+      } @else {
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="tri" d="M8 5.5l11 6.5-11 6.5z" />
+        </svg>
+      }
+    </button>
+    @for (s of slides; track s.id; let i = $index) {
+      <button
+        [class.active]="i === slide()"
+        (click)="go(i)"
+        [attr.aria-label]="'Ir para o destaque ' + (i + 1)"
+        [attr.aria-current]="i === slide()"
+      ></button>
+    }
+  </div>
+</section>
+
+<main>
+  <app-paper class="paper turno" variant="jornal" rotulo="Eleições 2026" [tilt]="0.5">
+    <div class="front">
+      <div class="headline">
+        <p class="countdown">
+          @if (daysToRunoff > 1) {
+            Faltam <b>{{ daysToRunoff }}</b> dias
+          } @else if (daysToRunoff === 1) {
+            É <b>amanhã</b>
+          } @else if (daysToRunoff === 0) {
+            É <b>hoje</b>
+          } @else {
+            Votação encerrada
+          }
+        </p>
+        <span class="tag fato">Fato</span>
+        <h2>2º turno em {{ firstRound.runoff }}</h2>
+        <p class="deck">{{ firstRound.rule }}</p>
+        <app-source-links [sources]="firstRound.ruleSources" />
+        <a class="cta" href="#comparar">Comparar as propostas →</a>
+      </div>
+
+      <div class="results">
+        <p class="results-title">Resultado do 1º turno · {{ firstRound.date }}</p>
+        <ul class="turno-result">
+          @for (r of firstRoundView; track r.id) {
+            <li>
+              <img [src]="r.photo" alt="" width="56" height="56" />
+              <div class="who">
+                <span class="name">{{ r.name }}</span>
+                <small>{{ r.votes }} votos</small>
+              </div>
+              <strong>{{ fmt(r.pct) }}%</strong>
+              <div class="track" aria-hidden="true">
+                <div class="fill" [style.width.%]="r.bar"></div>
+              </div>
+            </li>
+          }
+        </ul>
+        <p class="half-note">
+          <i aria-hidden="true"></i> 50% dos votos válidos: quem passasse dessa marca venceria já no
+          1º turno.
+        </p>
+        <dl class="turno-math">
+          <div>
+            <dt>Diferença</dt>
+            <dd>{{ fmt(firstRoundMath.points) }} pontos · {{ firstRoundMath.votes }} votos</dd>
+          </div>
+          <div>
+            <dt>Demais candidatos</dt>
+            <dd>{{ fmt(firstRoundMath.others) }}% dos válidos, somados</dd>
+          </div>
+        </dl>
+        <p class="note">
+          Diferença e soma dos demais: cálculo do site a partir dos números acima.
+          {{ firstRound.note }}
+        </p>
+        <app-source-links [sources]="firstRound.sources" />
+      </div>
+    </div>
+  </app-paper>
+
+  <div class="who" id="candidatos">
+    <h2 class="impact-title">Quem são os candidatos</h2>
+    <p class="section-lead">
+      Trajetória e plano de governo de cada um, antes de comparar as propostas.
+    </p>
+    <div class="columns">
+      @for (c of candidates(); track c.id) {
+        <app-paper class="paper candidate" variant="liso">
+          <header class="candidate-head">
+            <img [src]="c.photo.src" alt="" width="72" height="72" />
+            <div>
+              <span class="tag fato">Fato</span>
+              <h3>{{ c.name }}</h3>
+              <p class="meta">{{ c.party }} · vice: {{ c.vice }}</p>
+            </div>
+          </header>
+          <p>{{ c.background }}</p>
+          <dl class="profile">
+            @for (item of c.profile; track item.label) {
+              <div>
+                <dt>{{ item.label }}</dt>
+                <dd>{{ item.value }}</dd>
+              </div>
+            }
+          </dl>
+          <p>
+            <strong>{{ c.planTitle }}.</strong> {{ c.planSummary }}
+          </p>
+          <app-source-links [sources]="c.sources" />
+        </app-paper>
+      }
+    </div>
+  </div>
+
+  <section id="hoje">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 1 de 4</span> Ponto de partida</p>
+      <h2 class="section-title">Como estamos hoje</h2>
+      <p class="section-lead">Quatro números oficiais para situar a conversa.</p>
+    </header>
+    <div class="grid-4">
+      @for (item of snapshot.items; track item.label; let i = $index) {
+        <app-paper
+          class="paper stat"
+          variant="postit"
+          [cor]="postitColors[i % postitColors.length]"
+        >
+          <span class="tag fato">Fato</span>
+          <p class="stat-label">{{ item.label }}</p>
+          <p class="stat-value">{{ item.value }}</p>
+          <p class="stat-detail">{{ item.detail }}</p>
+          <app-source-links [sources]="item.sources" />
+        </app-paper>
+      }
+    </div>
+    <app-paper class="paper reading" variant="liso"
+      ><p><span class="tag analise">Análise</span> {{ snapshot.reading }}</p></app-paper
+    >
+  </section>
+
+  <section id="comparar">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 2 de 4</span> As propostas</p>
+      <h2 class="section-title">Compare por assunto</h2>
+      <p class="section-lead">Escolha um tema. As duas colunas respondem às mesmas perguntas.</p>
+    </header>
+
+    <div class="compare-layout">
+      <!-- telas largas: menu lateral que acompanha a rolagem pelas propostas e pela análise -->
+      <aside class="topic-nav" aria-label="Temas">
+        <p class="topic-nav-title">Escolha o tema</p>
+        @for (g of topicGroups; track g.label) {
+          <p class="topic-nav-group">{{ g.label }}</p>
+          <ul>
+            @for (t of g.topics; track t.id) {
+              <li>
+                <button
+                  [attr.aria-pressed]="t.id === topicId()"
+                  [class.active]="t.id === topicId()"
+                  (click)="setTopic(t.id)"
+                >
+                  <span aria-hidden="true">{{ t.icon }}</span> {{ t.title }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+        <p class="topic-nav-hint">Vale para as propostas e para “E na vida das pessoas?”.</p>
+      </aside>
+
+      <!-- telas menores: barra fixa com a escolha do tema -->
+      <div class="topic-picker">
+        <label for="topic-select">Tema</label>
+        <select id="topic-select" [value]="topicId()" (change)="pickTopic($event)">
+          @for (g of topicGroups; track g.label) {
+            <optgroup [label]="g.label">
+              @for (t of g.topics; track t.id) {
+                <option [value]="t.id" [selected]="t.id === topicId()">
+                  {{ t.icon }} {{ t.title }}
+                </option>
+              }
+            </optgroup>
+          }
+        </select>
+      </div>
+
+      <div class="compare-main">
+        <div class="topic-head">
+          <p class="question">
+            <span class="topic-chip">{{ topic().icon }} {{ topic().title }}</span>
+            {{ topic().question }}
+          </p>
+          <div class="topic-actions">
+            <button class="share" (click)="shareTopic()">
+              {{ linkCopied() ? '✓ Link copiado' : '↗ Compartilhar este tema' }}
+            </button>
+            <a
+              class="share whatsapp"
+              [href]="whatsAppLink()"
+              target="_blank"
+              rel="noopener noreferrer"
+              >WhatsApp</a
+            >
+            <button class="swap" (click)="swapped.set(!swapped())">⇄ Inverter colunas</button>
+          </div>
+        </div>
+
+        <div class="columns sheets">
+          @for (c of candidates(); track c.id; let i = $index) {
+            <app-paper class="sheet" letterhead="full" [tilt]="2" [tear]="tearSides[c.id]">
+              <header>
+                <div class="sheet-title">
+                  <p class="kicker">Candidato à Presidência</p>
+                  <h3>{{ c.name }}</h3>
+                  <p class="meta">{{ c.party }} · vice: {{ c.vice }}</p>
+                  <p class="plan">Plano: {{ c.planTitle }}</p>
+                </div>
+                <figure>
+                  <img
+                    [src]="c.photo.src"
+                    [alt]="'Retrato oficial de ' + c.name"
+                    width="120"
+                    height="150"
+                    loading="lazy"
+                  />
+                  <figcaption>
+                    <a [href]="c.photo.url" target="_blank" rel="noopener noreferrer">{{
+                      c.photo.credit
+                    }}</a>
+                  </figcaption>
+                </figure>
+              </header>
+
+              <h4>O que propõe</h4>
+              <ul class="proposals">
+                @for (p of topic().proposals[c.id]; track p.summary) {
+                  <li [class.missing]="p.status === 'nao-localizado'">
+                    <span
+                      class="tag"
+                      [class.proposta]="p.status !== 'nao-localizado'"
+                      [class.vazio]="p.status === 'nao-localizado'"
+                      >{{ proposalTag(p) }}</span
+                    >
+                    <p>{{ p.summary }}</p>
+                    <app-source-links [sources]="p.sources" />
+                  </li>
+                }
+              </ul>
+            </app-paper>
+          }
+        </div>
+
+        <h3 class="impact-title">
+          E na vida das pessoas?
+          <span class="topic-chip">{{ topic().icon }} {{ topic().title }}</span>
+        </h3>
+        <p class="section-lead">
+          <span class="tag analise">Análise</span> O que vem abaixo é interpretação do site sobre
+          efeitos possíveis — não é fato nem previsão.
+        </p>
+        <div class="columns">
+          @for (c of candidates(); track c.id) {
+            <app-paper class="paper impact" variant="liso" [faixa]="true">
+              <h4>Se a proposta de {{ c.name }} for adiante</h4>
+              <p class="mechanism">
+                <strong>Como funcionaria:</strong> {{ topic().impact[c.id].mechanism }}
+              </p>
+              <div class="pros-cons">
+                <div class="pro">
+                  <h5>O que pode melhorar</h5>
+                  <ul>
+                    @for (b of topic().impact[c.id].benefits; track b) {
+                      <li>{{ b }}</li>
+                    }
+                  </ul>
+                </div>
+                <div class="con">
+                  <h5>O que pode dar errado</h5>
+                  <ul>
+                    @for (r of topic().impact[c.id].risks; track r) {
+                      <li>{{ r }}</li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            </app-paper>
+          }
+        </div>
+        <app-paper class="paper monitor" variant="liso">
+          <h4>O que acompanhar para saber se funcionou</h4>
+          <ul>
+            @for (m of topic().impact.monitor; track m) {
+              <li>{{ m }}</li>
+            }
+          </ul>
+        </app-paper>
+        <a class="ask-ai" href="#ia" (click)="askAboutTopic()">
+          <span aria-hidden="true">💬</span> Ficou com dúvida? Pergunte a uma IA sobre
+          {{ topic().title.toLowerCase() }} →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="congresso">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 3 de 4</span> O Congresso</p>
+      <h2 class="section-title">Quem decide de verdade</h2>
+      <p class="section-lead">
+        Presidente propõe; Congresso aprova, muda ou barra. A Câmara e o Senado já foram eleitos: o
+        que muda é quem chega ao Planalto.
+      </p>
+    </header>
+
+    <div class="compare-layout">
+      <!-- telas largas: menu lateral que acompanha a rolagem pela análise e pelo Congresso -->
+      <aside class="topic-nav scenario-nav" aria-label="Quem vence o 2º turno">
+        <p class="topic-nav-title">Quem vence o 2º turno?</p>
+        <p class="topic-nav-group">Escolha um cenário</p>
+        <ul>
+          @for (c of candidates(); track c.id) {
+            <li>
+              <button
+                [attr.aria-pressed]="c.id === scenarioId()"
+                [class.active]="c.id === scenarioId()"
+                (click)="scenarioId.set(c.id)"
+              >
+                <img [src]="c.photo.src" alt="" width="40" height="40" />
+                <span><small>Se vencer</small> {{ c.name }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+        <p class="topic-nav-hint">Vale para a análise e para o Congresso ao lado.</p>
+      </aside>
+
+      <!-- telas menores: barra fixa com os dois cenários -->
+      <div class="topic-picker scenario-picker" role="group" aria-label="Quem vence o 2º turno">
+        <label>Se vencer</label>
+        @for (c of candidates(); track c.id) {
+          <button
+            [attr.aria-pressed]="c.id === scenarioId()"
+            [class.active]="c.id === scenarioId()"
+            (click)="scenarioId.set(c.id)"
+          >
+            <img [src]="c.photo.src" alt="" width="28" height="28" /> {{ c.name }}
+          </button>
+        }
+      </div>
+
+      <div class="compare-main">
+        <p class="step"><b>1</b> Como ficaria o governo de {{ winner().name }}</p>
+        <app-paper class="paper scenario" variant="jornal" rotulo="Análise" [tilt]="0.4">
+          <span class="tag analise">Análise</span>
+          <h3>{{ scenario().title }}</h3>
+          <p class="lead-in">{{ scenario().reading }}</p>
+          <div class="pros-cons">
+            <div class="pro">
+              <h4 class="h5">Pontos positivos da combinação</h4>
+              <ul>
+                @for (p of scenario().positives; track p) {
+                  <li>{{ p }}</li>
+                }
+              </ul>
+            </div>
+            <div class="con">
+              <h4 class="h5">Pontos negativos da combinação</h4>
+              <ul>
+                @for (n of scenario().negatives; track n) {
+                  <li>{{ n }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+          <p class="note">{{ blocNote.text }}</p>
+          <app-source-links [sources]="blocNote.sources" />
+        </app-paper>
+
+        <p class="step"><b>2</b> O Congresso que {{ winner().name }} encontraria</p>
+        <div class="columns">
+          @for (ch of chambers; track ch.id) {
+            <app-paper class="paper chamber" variant="liso">
+              <span class="tag fato">Fato</span>
+              <h3>
+                {{ ch.name }}
+                <small>{{ ch.total }} cadeiras · cenário: {{ winner().name }} eleito</small>
+              </h3>
+
+              <div class="bar-wrap">
+                <div
+                  class="bar"
+                  role="img"
+                  [attr.aria-label]="'Distribuição das cadeiras: ' + ch.name"
+                >
+                  @for (b of blocs(ch); track b.role) {
+                    <div class="seg" [class]="'seg ' + b.role" [style.width.%]="b.pct">
+                      {{ b.seats }}
+                    </div>
+                  }
+                </div>
+                @for (t of ch.thresholds; track t.seats) {
+                  <div class="threshold" [style.left.%]="(t.seats / ch.total) * 100">
+                    <span>{{ t.seats }}</span>
+                  </div>
+                }
+              </div>
+
+              <ul class="legend">
+                @for (b of blocs(ch); track b.role) {
+                  <li>
+                    <i [class]="b.role"></i>
+                    <div>
+                      <strong>{{ b.label }}: {{ b.seats }}</strong
+                      ><span>{{ b.parties }}</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+
+              <ul class="thresholds">
+                @for (t of ch.thresholds; track t.seats) {
+                  <li>
+                    <strong>{{ t.seats }}</strong> = {{ t.label }} — {{ t.note }}
+                  </li>
+                }
+              </ul>
+              <p class="note">{{ ch.caveat }}</p>
+              <app-source-links [sources]="ch.sources" />
+            </app-paper>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="historico">
+    <header class="section-head">
+      <p class="section-kicker"><span>Parte 4 de 4</span> A série histórica</p>
+      <h2 class="section-title">O que os dados mostram</h2>
+      <p class="section-lead">
+        Séries oficiais do IBGE e do Banco Central, ano a ano. Os governos aparecem só como legenda
+        de período: o gráfico não atribui culpa nem mérito.
+      </p>
+    </header>
+
+    @for (ind of indicators; track ind.id) {
+      <app-paper class="paper indicator" variant="liso" [faixa]="true">
+        <span class="tag fato">Fato</span>
+        <h3>
+          {{ ind.title }} <small>{{ ind.unit }}</small>
+        </h3>
+        <p>
+          @let d = descParts(ind);
+          <!-- prettier-ignore -->
+          <span>{{ d[0] }}@if (d[1]) {<mark class="hl">{{ d[1] }}</mark>}{{ d[2] }}</span>
+          <strong>Dado mais recente ({{ ind.latest.label }}): {{ ind.latest.value }}.</strong>
+        </p>
+
+        @if (ind.lines; as lines) {
+          <div class="mode-switch" role="group" aria-label="Como mostrar os valores">
+            <button [class.active]="incomeMode() === 'real'" (click)="incomeMode.set('real')">
+              Valores de hoje
+            </button>
+            <button [class.active]="incomeMode() === 'nominal'" (click)="incomeMode.set('nominal')">
+              Valores da época
+            </button>
+          </div>
+          @let lc = lineChart(lines);
+          <p class="chart-hint" aria-hidden="true">
+            Deslize o gráfico para o lado para ver todos os anos →
+          </p>
+          <div class="line-chart">
+            <div class="line-stage">
+              <svg
+                [attr.viewBox]="'0 0 ' + lc.W + ' ' + lc.H"
+                role="img"
+                [attr.aria-label]="
+                  ind.title +
+                  ', ' +
+                  (incomeMode() === 'real' ? 'valores de hoje' : 'valores da época')
+                "
+              >
+                @for (t of lc.ticks; track t.label) {
+                  <line
+                    class="grid"
+                    [attr.x1]="70"
+                    [attr.x2]="lc.W - 24"
+                    [attr.y1]="t.y"
+                    [attr.y2]="t.y"
+                  />
+                  <text class="tick" [attr.x]="62" [attr.y]="t.y + 5">{{ t.label }}</text>
+                }
+                @for (yr of lc.years; track yr.label) {
+                  <text class="year" [attr.x]="yr.x" [attr.y]="lc.baseY + 24">{{ yr.label }}</text>
+                }
+                @for (g of lc.govs; track $index) {
+                  <line
+                    class="gov"
+                    [attr.x1]="g.x1"
+                    [attr.x2]="g.x2"
+                    [attr.y1]="lc.baseY + 40"
+                    [attr.y2]="lc.baseY + 40"
+                  />
+                  <!-- "Dilma/Temer" quebra em duas linhas para caber no espaço de um ano -->
+                  <text class="gov" [attr.y]="lc.baseY + (g.parts.length > 1 ? 58 : 62)">
+                    @for (part of g.parts; track $index) {
+                      <tspan [attr.x]="(g.x1 + g.x2) / 2" [attr.dy]="$index ? 17 : 0">
+                        {{ part }}
+                      </tspan>
+                    }
+                  </text>
+                }
+                @for (l of lc.lines; track l.key) {
+                  <g [class]="'serie ' + l.key">
+                    <path [attr.d]="l.d" />
+                    @for (pt of l.pts; track pt.year) {
+                      <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" />
+                      <!-- área de toque maior, invisível, que abre o balão -->
+                      <circle
+                        class="hit"
+                        [attr.cx]="pt.x"
+                        [attr.cy]="pt.y"
+                        r="16"
+                        tabindex="0"
+                        role="button"
+                        [attr.aria-label]="l.label + ', ' + pt.year + ': ' + reais(pt.v)"
+                        (mouseenter)="hoverPoint.set({ key: l.key, year: pt.year })"
+                        (mouseleave)="hoverPoint.set(null)"
+                        (focus)="hoverPoint.set({ key: l.key, year: pt.year })"
+                        (blur)="hoverPoint.set(null)"
+                        (click)="toggleHover(l.key, pt.year)"
+                      />
+                    }
+                    <text class="val" [attr.x]="l.first.x" [attr.y]="l.first.y - 12">
+                      {{ reais(l.first.v) }}
+                    </text>
+                    <text class="val end" [attr.x]="l.last.x" [attr.y]="l.last.y - 12">
+                      {{ reais(l.last.v) }}
+                    </text>
+                  </g>
+                }
+              </svg>
+              @for (l of lc.lines; track l.key) {
+                @for (pt of l.pts; track pt.year) {
+                  @if (hoverPoint()?.key === l.key && hoverPoint()?.year === pt.year) {
+                    <div
+                      class="point-tip"
+                      [class.left]="pt.left > 75"
+                      [class.below]="pt.top < 45"
+                      [class.right]="pt.left < 20"
+                      [style.left.%]="pt.left"
+                      [style.top.%]="pt.top"
+                      aria-hidden="true"
+                    >
+                      <small>{{ l.label }} · {{ pt.year }}</small>
+                      <strong>{{ reais(pt.v) }}</strong>
+                      @if (pt.ratio) {
+                        <span>≈ {{ fmt1(pt.ratio) }} salários mínimos</span>
+                      }
+                      <em>{{
+                        incomeMode() === 'real' ? 'em valores de hoje' : 'em valores da época'
+                      }}</em>
+                    </div>
+                  }
+                }
+              }
+            </div>
+          </div>
+          <ul class="line-legend">
+            @for (l of lc.lines; track l.key) {
+              <li [class]="l.key"><i></i>{{ l.label }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="chart-hint" aria-hidden="true">
+            Deslize o gráfico para o lado para ver todos os anos →
+          </p>
+          <div class="chart">
+            @for (g of groups(ind); track $index) {
+              <div class="chart-group" [style.flex-grow]="g.points.length">
+                <div class="bars">
+                  @for (p of g.points; track p.year) {
+                    <div
+                      class="col"
+                      [title]="p.year + ': ' + fmtValue(ind, p.value)"
+                      [style.--h.%]="(p.value / maxValue(ind)) * 100"
+                    >
+                      <div class="plot">
+                        <span class="val">{{ fmtBar(ind, p.value) }}</span>
+                        <div class="fill"></div>
+                      </div>
+                      <span class="year">{{ p.year % 100 < 10 ? '0' : '' }}{{ p.year % 100 }}</span>
+                    </div>
+                  }
+                </div>
+                <p class="gov">{{ g.government }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="cannot">
+          <h4 class="h5">O que este dado não permite concluir</h4>
+          <ul>
+            @for (c of ind.cannotConclude; track c) {
+              <li>{{ c }}</li>
+            }
+          </ul>
+        </div>
+        <app-source-links [sources]="ind.sources" />
+      </app-paper>
+    }
+
+    <app-paper class="paper averages" variant="liso" [faixa]="true">
+      <span class="tag fato">Cálculo do site</span>
+      <h3>Média por período de governo</h3>
+      <p>Média simples dos anos de cada período, a partir das mesmas séries dos gráficos acima.</p>
+      <div class="averages-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Período</th>
+              @for (ind of indicators; track ind.id) {
+                <th scope="col">{{ ind.title }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (g of govAverages; track g.from) {
+              <tr>
+                <th scope="row">
+                  {{ g.government }}
+                  <small>{{ g.from }}{{ g.to !== g.from ? '–' + g.to : '' }}</small>
+                </th>
+                @for (v of g.values; track $index) {
+                  <td>{{ v === null ? '—' : fmtValue(indicators[$index], v) }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        “—” = sem dado na série (o desemprego atual do IBGE começa em 2012). 2016 aparece à parte
+        porque teve dois presidentes, e o período mais recente vai só até 2025. Média de um período
+        não mede só o governo: crises externas, pandemia e decisões do Banco Central também pesam
+        (veja “O que este dado não permite concluir” em cada gráfico).
+      </p>
+    </app-paper>
+  </section>
+
+  <section id="metodo">
+    <p class="about-kicker"><span>Sobre este site</span> Fim da comparação entre os candidatos</p>
+    <h2 class="section-title">Como lemos os fatos</h2>
+    <p class="section-lead">
+      Daqui para baixo não há análise de candidato: são as regras que o site segue, o que ainda
+      falta conferir e um guia para você avaliar o que recebe nas redes.
+    </p>
+    <div class="columns method-cards">
+      <app-paper class="paper" [tilt]="0.9">
+        <h3><span class="method-icon ok" aria-hidden="true">✓</span> Regras do site</h3>
+        <ul class="rules checks">
+          @for (r of rules; track r) {
+            <li>{{ r }}</li>
+          }
+        </ul>
+        <ul class="tags-key">
+          <li><span class="tag fato">Fato</span> dado oficial ou evento registrado</li>
+          <li><span class="tag proposta">Proposta</span> promessa de campanha</li>
+          <li><span class="tag analise">Análise</span> interpretação do site</li>
+        </ul>
+      </app-paper>
+      <app-paper class="paper" [tilt]="0.9">
+        <h3><span class="method-icon warn" aria-hidden="true">!</span> Limites desta versão</h3>
+        <ul class="rules limits">
+          @for (l of limitations; track l) {
+            <li>{{ l }}</li>
+          }
+        </ul>
+      </app-paper>
+    </div>
+
+    <app-paper class="paper timeline-card" variant="liso" [faixa]="true">
+      <h3>O que pode mudar depois desta revisão</h3>
+      <p>
+        Fatos dos próximos meses que podem tornar parte deste conteúdo desatualizada. Confira a data
+        da última revisão antes de usar os números.
+      </p>
+      <ol class="timeline">
+        @for (u of updates; track u.when) {
+          <li>
+            <span class="when">{{ u.when }}</span>
+            <p>{{ u.text }}</p>
+          </li>
+        }
+      </ol>
+      <p class="note">Última revisão do conteúdo: {{ updatedAt }}.</p>
+    </app-paper>
+    <app-paper
+      class="paper viral"
+      variant="jornal"
+      rotulo="Guia do leitor"
+      [tilt]="0.5"
+      [tear]="viralTear"
+    >
+      <h3>Recebeu um vídeo alarmante?</h3>
+      <p>Quatro perguntas antes de acreditar ou compartilhar:</p>
+      <ol>
+        <li>
+          <strong>Qual é o fato original?</strong> O que as imagens mostram de verdade, quando e
+          onde.
+        </li>
+        <li>
+          <strong>Qual conclusão o vídeo quer que você tire?</strong> Ela é dita ou só sugerida pela
+          música e pela edição?
+        </li>
+        <li>
+          <strong>Existe evidência ligando uma coisa à outra?</strong> Colocar duas imagens lado a
+          lado não prova relação entre elas.
+        </li>
+        <li>
+          <strong>Vale para os dois lados?</strong> Se o mesmo recurso fosse usado contra o seu
+          candidato, você aceitaria?
+        </li>
+      </ol>
+    </app-paper>
+  </section>
+
+  <section id="ia">
+    <header class="section-head">
+      <p class="section-kicker"><span>Para ir além</span> Pesquise por conta própria</p>
+      <h2 class="section-title">Tire suas dúvidas com uma IA</h2>
+      <p class="section-lead">
+        Escolha uma pergunta pronta, ajuste se quiser e leve para a inteligência artificial que
+        preferir. Todas têm versão gratuita.
+      </p>
+    </header>
+
+    <div class="ai-box">
+      <div class="ai-question">
+        <p class="ai-step"><b>1</b> Escolha uma pergunta</p>
+        <div class="ai-chips">
+          @for (q of aiQuestions; track q.id) {
+            <button
+              [class.active]="q.id === aiChoice()"
+              [attr.aria-pressed]="q.id === aiChoice()"
+              (click)="aiChoice.set(q.id)"
+            >
+              {{ q.label }}
+            </button>
+          }
+        </div>
+        @if (aiChoice() === 'tema' || aiChoice() === 'estudos') {
+          <label class="ai-topic">
+            Tema
+            <select [value]="topicId()" (change)="pickTopic($event)">
+              @for (g of topicGroups; track g.label) {
+                <optgroup [label]="g.label">
+                  @for (t of g.topics; track t.id) {
+                    <option [value]="t.id" [selected]="t.id === topicId()">
+                      {{ t.icon }} {{ t.title }}
+                    </option>
+                  }
+                </optgroup>
+              }
+            </select>
+          </label>
+        }
+        <p class="ai-step"><b>2</b> Confira ou ajuste o texto</p>
+        <textarea
+          rows="6"
+          [value]="aiText()"
+          (input)="aiText.set($any($event.target).value)"
+          aria-label="Pergunta para a IA"
+        ></textarea>
+        <button class="ai-copy" (click)="copyAiText()">
+          {{ aiCopied() ? '✓ Pergunta copiada' : 'Copiar pergunta' }}
+        </button>
+      </div>
+
+      <div class="ai-targets">
+        <p class="ai-step"><b>3</b> Abra numa IA</p>
+        <ul>
+          @for (ai of aiLinks; track ai.name) {
+            <li>
+              <a
+                [href]="aiHref(ai)"
+                target="_blank"
+                rel="noopener noreferrer"
+                (click)="copyAiText()"
+              >
+                <strong>{{ ai.name }}</strong>
+                <small>{{
+                  ai.prefill ? 'abre com a pergunta' : 'abre e você cola a pergunta'
+                }}</small>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+          }
+        </ul>
+        <p class="ai-note">
+          Ao clicar, a pergunta também é copiada. Ordem alfabética; o site não tem vínculo com
+          nenhuma delas.
+        </p>
+        <div class="ai-warning">
+          <strong>Antes de confiar na resposta</strong>
+          <ul>
+            <li>IAs erram, inventam dados e podem ter viés. Peça as fontes e confira.</li>
+            <li>Algumas IAs evitam responder sobre eleições ou não conhecem fatos recentes.</li>
+            <li>
+              As propostas originais estão nos planos do TSE, nos links “Fontes” de cada item deste
+              site.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <p class="footer-brand">Política sem Gritos <span>leia, compare, decida</span></p>
+      <p>
+        Projeto independente de <strong>{{ site.author }}</strong
+        >. Sem vínculo com partidos, candidatos ou campanhas, sem financiamento e sem
+        impulsionamento pago.
+      </p>
+    </div>
+    <div>
+      <p>Conteúdo revisado em {{ updatedAt }}. Toda informação traz a fonte e a data de acesso.</p>
+      <p>
+        Código aberto sob licença {{ site.license }}.
+        @if (site.repoUrl) {
+          <a [href]="site.repoUrl" target="_blank" rel="noopener noreferrer">Ver no GitHub</a> ·
+          <a [href]="site.repoUrl + '/issues'" target="_blank" rel="noopener noreferrer"
+            >apontar um erro ou pedir correção</a
+          >.
+        }
+      </p>
+      <p class="footer-credits">
+        Fotos: retratos oficiais (Agência Senado; Ricardo Stuckert/PR, CC BY 2.0), TSE (domínio
+        público) e Agência Senado (CC BY 2.0). Créditos completos junto de cada imagem.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<a
+  class="to-top"
+  href="#inicio"
+  [class.visible]="showTop()"
+  [attr.tabindex]="showTop() ? null : -1"
+  aria-label="Voltar ao início"
+>
+  <span class="to-top-label" aria-hidden="true">Voltar ao início</span>
+  <span class="to-top-btn">
+    <!-- anel de leitura: preenche conforme a página é rolada -->
+    <svg class="ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="22" pathLength="100" />
+      <circle
+        class="done"
+        cx="24"
+        cy="24"
+        r="22"
+        pathLength="100"
+        [style.stroke-dashoffset]="100 - readProgress() * 100"
+      />
+    </svg>
+    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6" /></svg>
+  </span>
+</a>

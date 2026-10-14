@@ -1,0 +1,66 @@
+:root {
+  --papel: #ffffff;
+  --verde: #176b4d;
+  --azul: #174a7e;
+  --amarelo: #f2c94c;
+  --tinta: #1f2933;
+  --tinta-suave: #5b6770;
+  --linha: #e4e1d8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+
+  // base maior que o padrão do navegador (16px): todo o site é medido em rem e cresce junto.
+  // Fica em 18px até 1600px de tela e sobe aos poucos em monitores maiores (até 21px).
+  font-size: clamp(1.125rem, 0.625rem + 0.5vw, 1.3125rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  overflow-x: clip;
+  color: var(--tinta);
+  font-family:
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    Roboto,
+    sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  // textura de papel quase imperceptível sobre o branco
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .42 0 0 0 0 .35 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #fff;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--azul);
+  line-height: 1.2;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--amarelo);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  html {
+    font-size: 106.25%;
+  }
+}

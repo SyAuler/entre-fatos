@@ -1,0 +1,204 @@
+// Ajustes para telas menores (sempre por último).
+
+// ---------- Responsividade ----------
+
+// tablet deitado / notebook pequeno
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .columns {
+    gap: 2rem;
+  }
+  .sheets {
+    gap: 2.6rem;
+    padding-inline: 0.5rem;
+  }
+  .topbar nav {
+    gap: 0.2rem 0.9rem;
+
+    a {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// tablet em pé / celular grande: uma coluna, menus roláveis na horizontal
+@media (max-width: 860px) {
+  // o cabeçalho fica mais alto (menu em segunda linha): a barra de tema prende logo abaixo dele
+  .topic-picker {
+    top: 5.6rem;
+  }
+  .turno .front {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.6rem;
+  }
+  .turno .results {
+    padding: 1.4rem 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(18, 48, 79, 0.35);
+  }
+  main {
+    // folhas menos tortas em tela estreita, para nada sair pela borda
+    --paper-tilt-scale: 0.55;
+  }
+  section {
+    scroll-margin-top: 6.5rem;
+  }
+  .columns,
+  .scenario .pros-cons {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .columns,
+  .sheets {
+    gap: 2.6rem;
+  }
+  .monitor ul,
+  .jornal ol {
+    columns: 1;
+  }
+  .jornal .pros-cons .con {
+    padding-left: 0;
+    padding-top: 0.8rem;
+    border-left: 0;
+    border-top: 1px solid rgba(18, 48, 79, 0.35);
+  }
+  .topbar .topbar-inner {
+    padding-top: 0.5rem;
+    padding-bottom: 0;
+  }
+  .topbar nav .long {
+    display: none;
+  }
+  .topbar nav .short {
+    display: inline;
+  }
+  // menu do topo: nomes curtos, distribuídos na largura toda, sem precisar rolar
+  .topbar nav {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.2rem 0.8rem;
+    padding: 0.35rem 0 0.6rem;
+
+    a {
+      font-size: 0.9rem;
+    }
+  }
+  .slide.escuro::before {
+    background: linear-gradient(90deg, rgba(12, 42, 74, 0.88), rgba(12, 42, 74, 0.62));
+  }
+  .slide.claro::before {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.6));
+  }
+  .slide-text {
+    padding: 0 3.6rem 1.5rem;
+  }
+}
+
+// celular
+@media (max-width: 560px) {
+  .step {
+    font-size: 1.05rem;
+  }
+  main,
+  footer,
+  .topbar-inner {
+    padding-inline: 1rem;
+  }
+  section {
+    margin: 3.4rem 0 2.2rem;
+  }
+  .section-kicker {
+    font-size: 0.78rem;
+    gap: 0.5rem;
+  }
+  .section-head {
+    margin-bottom: 1.5rem;
+    padding: 1.3rem 0 1.2rem;
+  }
+  .grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.6rem;
+  }
+  .sheets {
+    padding-inline: 0;
+  }
+  .carousel {
+    height: 27rem;
+  }
+  .slide-text {
+    padding: 0 1.25rem 3rem;
+
+    .lead {
+      font-size: 1rem;
+    }
+  }
+  // o crédito da foto sobe para o canto de cima: embaixo ficam as setas e as bolinhas
+  .slide .credit {
+    top: 0.5rem;
+    bottom: auto;
+    right: 0.5rem;
+  }
+  // setas descem para junto das bolinhas, liberando a largura para o texto.
+  // Ficam acima da faixa das bolinhas (z-index no _carrossel.scss), então o botão
+  // inteiro recebe o toque.
+  .arrow {
+    top: auto;
+    bottom: 0.55rem;
+    transform: none;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .topic-head .question {
+    font-size: 1.1rem;
+  }
+  .turno .turno-result strong {
+    font-size: 1.9rem;
+  }
+  .turno .turno-math {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.6rem;
+  }
+  .stat .stat-value {
+    font-size: 1.8rem;
+  }
+  .sheet {
+    h3 {
+      font-size: 1.4rem;
+    }
+    figure,
+    img {
+      width: 6.4rem;
+    }
+    img {
+      height: 8rem;
+    }
+  }
+  .pros-cons .pro,
+  .pros-cons .con {
+    padding: 0.7rem 0.8rem;
+  }
+  .tags-key .tag:not(:first-child) {
+    margin-left: 0.3rem;
+  }
+}
+
+// o subtítulo (cadeiras e cenário) vai para a linha de baixo do nome da Casa
+.chamber h3 small {
+  display: block;
+  margin-top: 0.15rem;
+}
+
+// celular estreito: os cinco itens do menu do topo numa linha só
+@media (max-width: 420px) {
+  .topbar nav {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+
+    a {
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+  }
+}

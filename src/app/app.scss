@@ -1,0 +1,13 @@
+// Estilos do componente principal, divididos por parte da página (pasta estilos/).
+// A ordem importa: as regras de cada arquivo saem na ordem abaixo, e o responsivo fica por último.
+@use 'estilos/base';
+@use 'estilos/carrossel';
+@use 'estilos/secoes';
+@use 'estilos/turno';
+@use 'estilos/comparar';
+@use 'estilos/congresso';
+@use 'estilos/graficos';
+@use 'estilos/rodape';
+@use 'estilos/ia';
+@use 'estilos/metodo';
+@use 'estilos/responsivo';

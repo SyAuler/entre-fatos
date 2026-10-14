@@ -1,0 +1,315 @@
+// Carrossel do topo.
+
+.carousel {
+  position: relative;
+  margin: 0;
+  // acompanha a largura da tela até um teto, para a foto não virar uma tira fina
+  height: clamp(21rem, 32vw, 42rem);
+  overflow: hidden;
+  border-bottom: 1px solid var(--linha);
+  box-shadow: 0 10px 24px -14px rgba(60, 50, 30, 0.3);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.7s ease,
+    visibility 0.7s;
+  background: #fff;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  // foto de fundo, com um leve zoom lento enquanto o slide está à mostra
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transform: scale(1.04);
+    transition: transform 8s ease-out;
+  }
+  &.active .slide-bg {
+    transform: scale(1);
+  }
+
+  // véu à esquerda, para o texto ter contraste sobre a foto
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  // foto escura: véu azul e texto branco
+  &.escuro {
+    background-color: #123a66;
+
+    &::before {
+      background: linear-gradient(
+        90deg,
+        rgba(12, 42, 74, 0.92) 0%,
+        rgba(12, 42, 74, 0.72) 38%,
+        rgba(12, 42, 74, 0.15) 68%,
+        rgba(12, 42, 74, 0) 85%
+      );
+    }
+    h1,
+    .lead {
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(6, 24, 44, 0.55);
+    }
+    .kicker {
+      color: var(--amarelo);
+    }
+    .cta {
+      color: #12304f;
+      background: var(--amarelo);
+      box-shadow: 0 2px 0 #b8922a;
+
+      &:hover {
+        background: #f6d570;
+      }
+    }
+    .credit {
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(6, 24, 44, 0.45);
+    }
+  }
+
+  // foto clara: véu branco e texto escuro
+  &.claro {
+    &::before {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.82) 0%,
+        rgba(255, 255, 255, 0.55) 40%,
+        rgba(255, 255, 255, 0) 62%
+      );
+    }
+    .credit {
+      color: var(--tinta-suave);
+      background: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  // crédito da foto, discreto no canto
+  .credit {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.6rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.slide-text {
+  width: 100%;
+  max-width: clamp(1240px, 90vw, 1760px);
+  margin: 0 auto;
+  padding: 0 4rem;
+
+  > * {
+    max-width: 34rem;
+  }
+
+  .kicker {
+    margin: 0;
+    color: var(--verde);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    // "\n" no título vira quebra de linha
+    white-space: pre-line;
+    margin: 0.5rem 0;
+    font-size: clamp(1.7rem, 3.6vw, 2.7rem);
+  }
+
+  .lead {
+    margin: 0 0 1.1rem;
+    font-size: 1.08rem;
+    color: var(--tinta);
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    color: #fff;
+    background: var(--verde);
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 0 #0f4a35;
+
+    &:hover {
+      background: #125a40;
+    }
+  }
+}
+
+.arrow {
+  position: absolute;
+  // acima da faixa das bolinhas e do texto do slide: o botão inteiro recebe o clique
+  z-index: 3;
+  top: 50%;
+  transform: translateY(-50%);
+  // a seta é um desenho centrado na caixa, e não um caractere de fonte (que fica deslocado)
+  display: grid;
+  place-items: center;
+  padding: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--azul);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--linha);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(60, 50, 30, 0.15);
+
+  svg {
+    // o desenho da seta não captura o clique; quem recebe é o botão
+    pointer-events: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &.prev {
+    left: 0.8rem;
+  }
+  &.next {
+    right: 0.8rem;
+  }
+}
+
+.dots {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.1rem;
+  // a faixa ocupa a largura toda e, no celular, fica na mesma linha das setas:
+  // só os botões recebem toque, o resto deixa passar para as setas
+  pointer-events: none;
+  z-index: 2;
+
+  button {
+    // área de toque de 1,6rem (acessibilidade); a bolinha desenhada no meio é menor
+    pointer-events: auto;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      #fff 0 0.3rem,
+      var(--azul) 0.32rem 0.43rem,
+      transparent 0.45rem
+    );
+    cursor: pointer;
+
+    &.active {
+      background: radial-gradient(
+        circle,
+        var(--amarelo) 0 0.3rem,
+        var(--azul) 0.32rem 0.43rem,
+        transparent 0.45rem
+      );
+    }
+  }
+
+  // botão de pausar a troca automática (exigência de acessibilidade para conteúdo que se move)
+  // pausar/retomar: do tamanho das bolinhas, sem fundo, e só aparece ao passar o mouse
+  // no carrossel ou ao chegar nele pelo teclado (continua acessível)
+  .play {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0.4rem;
+    color: #fff;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+
+      .tri {
+        fill: currentColor;
+        stroke-width: 1.5;
+        stroke-linejoin: round;
+      }
+    }
+
+    &:focus-visible {
+      opacity: 1;
+    }
+  }
+}
+
+.carousel:hover .dots .play {
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+// slide claro: o símbolo fica azul
+.carousel:has(.slide.claro.active) .dots .play {
+  color: var(--azul);
+}
+// telas de toque não têm "passar o mouse": fica visível, mas bem discreto
+@media (hover: none) {
+  .dots .play {
+    opacity: 0.55;
+  }
+}
+
+// menos movimento para quem pede isso no sistema
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .slide .slide-bg,
+  .to-top,
+  .to-top-btn,
+  .chevron,
+  .ring .done {
+    transition: none !important;
+  }
+  .slide .slide-bg {
+    transform: none !important;
+  }
+}

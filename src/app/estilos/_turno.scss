@@ -1,0 +1,209 @@
+// Card do 1º turno e os post-its de "Como estamos hoje".
+
+// Capa do jornal: à esquerda a manchete do 2º turno; à direita, separado por um fio,
+// o placar do 1º turno com uma régua de 0 a 60% dos votos válidos.
+.turno {
+  margin-top: 1.5rem;
+
+  .front {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 2.6rem;
+  }
+
+  .countdown {
+    display: inline-block;
+    margin: 0 0.6rem 0.9rem 0;
+    padding: 0.2rem 0.8rem;
+    border: 1px solid currentColor;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--tinta-jornal);
+
+    b {
+      font-size: 1.05rem;
+    }
+  }
+
+  .headline h2 {
+    margin: 0.4rem 0 0.7rem;
+    font-size: clamp(1.9rem, 3.6vw, 2.8rem);
+  }
+
+  .deck {
+    font-size: 1.12rem;
+    line-height: 1.5;
+  }
+
+  .cta {
+    display: inline-block;
+    margin-top: 1.1rem;
+    padding: 0.55rem 1.1rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    color: #fff;
+    background: var(--tinta-jornal);
+    border-radius: 3px;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--azul);
+    }
+  }
+
+  .results {
+    padding-left: 2.6rem;
+    border-left: 1px solid rgba(18, 48, 79, 0.35);
+  }
+
+  .results-title {
+    margin: 0 0 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--tinta-jornal);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tinta-jornal);
+  }
+
+  .turno-result {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        'foto quem pct'
+        'foto barra barra';
+      align-items: center;
+      column-gap: 1rem;
+      row-gap: 0.35rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(18, 48, 79, 0.2);
+    }
+
+    img {
+      grid-area: foto;
+      width: 3.4rem;
+      height: 3.4rem;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 15%;
+      border: 2px solid #fff;
+      outline: 1px solid rgba(18, 48, 79, 0.3);
+    }
+
+    .who {
+      grid-area: quem;
+      display: grid;
+    }
+
+    .name {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    small {
+      color: var(--tinta-suave);
+    }
+
+    strong {
+      grid-area: pct;
+      font-family: Georgia, serif;
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--tinta-jornal);
+    }
+  }
+
+  // régua de 0 a 60%, com a marca dos 50% (maioria) em tracejado
+  .track {
+    grid-area: barra;
+    position: relative;
+    height: 0.75rem;
+    background: rgba(18, 48, 79, 0.08);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -0.3rem;
+      bottom: -0.3rem;
+      left: calc(50 / 60 * 100%);
+      border-left: 2px dashed var(--tinta-jornal);
+    }
+  }
+
+  .fill {
+    height: 100%;
+    background: repeating-linear-gradient(45deg, var(--tinta-jornal) 0 2px, #2c5786 2px 3.5px);
+  }
+
+  .half-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.7rem 0 0;
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+
+    i {
+      flex: none;
+      height: 1rem;
+      border-left: 2px dashed var(--tinta-jornal);
+    }
+  }
+
+  .turno-math {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 0.6rem;
+
+    div {
+      padding: 0.6rem 0.8rem;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(18, 48, 79, 0.2);
+    }
+
+    dt {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tinta-jornal);
+    }
+
+    dd {
+      margin: 0.15rem 0 0;
+      font-family: Georgia, serif;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.stat {
+  .stat-label {
+    margin-top: 0.6rem;
+    font-weight: 600;
+  }
+  .stat-value {
+    font-family: Georgia, serif;
+    font-size: 2.1rem;
+    color: var(--azul);
+    margin: 0;
+    line-height: 1.1;
+  }
+  .stat-detail {
+    font-size: 0.9rem;
+    color: var(--tinta-suave);
+  }
+}

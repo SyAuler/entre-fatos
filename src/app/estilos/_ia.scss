@@ -1,0 +1,219 @@
+// Seção "Tire suas dúvidas com uma IA".
+
+// Atalho no fim de cada tema para a seção de IA
+.ask-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0 1rem;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  color: var(--azul);
+  background: #eef5f0;
+  border: 1px solid #cfe3d6;
+  border-radius: 999px;
+  text-decoration: none;
+
+  &:hover {
+    background: #e2efe6;
+  }
+}
+
+// Seção "Tire suas dúvidas com uma IA": pergunta à esquerda, IAs à direita
+.ai-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 2rem;
+  padding: 1.6rem;
+  background: #fff;
+  border: 1px solid var(--linha);
+  border-top: 4px solid var(--verde);
+  border-radius: 12px;
+  box-shadow: 0 8px 22px -14px rgba(60, 50, 30, 0.4);
+}
+
+.ai-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.7rem;
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--azul);
+
+  b {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.9rem;
+    color: #12304f;
+    background: var(--amarelo);
+  }
+
+  * + & {
+    margin-top: 1.3rem;
+  }
+}
+
+.ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  button {
+    padding: 0.4rem 0.85rem;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--azul);
+    background: #fff;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--verde);
+    }
+
+    &.active {
+      color: #fff;
+      background: var(--verde);
+      border-color: var(--verde);
+      font-weight: 600;
+    }
+  }
+}
+
+.ai-topic {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+
+  select {
+    flex: 1;
+    min-width: 0;
+    padding: 0.4rem 0.6rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--azul);
+    background: #f7faf8;
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+  }
+}
+
+.ai-question textarea {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--tinta);
+  background: #fbfaf6;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.ai-copy {
+  margin-top: 0.7rem;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--azul);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: #12304f;
+  }
+}
+
+.ai-targets {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 0.65rem 0.9rem;
+    color: var(--azul);
+    background: #fff;
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    text-decoration: none;
+    transition:
+      border-color 0.15s,
+      transform 0.15s;
+
+    &:hover {
+      border-color: var(--verde);
+      transform: translateX(2px);
+    }
+
+    strong {
+      font-size: 1.05rem;
+    }
+
+    small {
+      grid-row: 2;
+      color: var(--tinta-suave);
+    }
+
+    span {
+      grid-row: 1 / 3;
+      grid-column: 2;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.ai-note {
+  margin: 0.7rem 0 0;
+  font-size: 0.82rem;
+  color: var(--tinta-suave);
+}
+
+.ai-warning {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background: #fffaeb;
+  border-left: 4px solid var(--amarelo);
+  border-radius: 6px;
+  font-size: 0.9rem;
+
+  ul {
+    display: block;
+    margin: 0.3rem 0 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+}
+
+@media (max-width: 860px) {
+  .ai-box {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.1rem;
+  }
+}

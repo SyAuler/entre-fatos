@@ -1,0 +1,171 @@
+// Seções, cabeçalhos de seção, cards e etiquetas.
+
+section {
+  margin: 5rem 0 3rem;
+  scroll-margin-top: 5rem;
+}
+
+// Faixa de abertura da seção: fundo próprio de ponta a ponta da tela, para marcar
+// a troca de assunto.
+.section-head {
+  --faixa: #e8f3ec;
+  margin: 0 0 2rem;
+  padding: 1.7rem 0 1.6rem;
+  background: var(--faixa);
+  box-shadow: 0 0 0 100vmax var(--faixa);
+  clip-path: inset(0 -100vmax);
+
+  .section-lead {
+    margin-bottom: 0;
+    color: var(--tinta);
+  }
+}
+
+// Abertura de seção: selo "Parte n de 4", assunto e um fio que atravessa a página,
+// começando nas três cores. É o que avisa que mudou de assunto.
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azul);
+
+  span {
+    flex: none;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--azul);
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    min-width: 2rem;
+    height: 4px;
+    border-radius: 2px;
+    background:
+      linear-gradient(90deg, var(--verde) 0 33.4%, var(--amarelo) 33.4% 66.7%, var(--azul) 66.7%)
+        left center / 7.5rem 4px no-repeat,
+      linear-gradient(rgba(23, 73, 120, 0.25), rgba(23, 73, 120, 0.25)) center / 100% 1px no-repeat;
+  }
+}
+
+.section-title {
+  font-size: clamp(1.7rem, 5vw, 2.5rem);
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+  padding-left: 0.9rem;
+  border-left: 8px solid var(--amarelo);
+}
+
+.section-lead {
+  margin: 0 0 1.6rem;
+  font-size: 1.08rem;
+  color: var(--tinta-suave);
+  max-width: 48rem;
+}
+
+// Todo card é um <app-paper> (pilha de folhas, ver paper-stack.ts). Aqui fica só
+// a tipografia do conteúdo.
+.paper {
+  h3 {
+    margin: 0.2rem 0 0.4rem;
+    font-size: 1.35rem;
+
+    small {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--tinta-suave);
+    }
+  }
+
+  h4 {
+    margin: 1rem 0 0.5rem;
+    color: var(--verde);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  // .h5: subtítulo com nível de título 4 (para a ordem dos títulos), aparência de h5
+  h5,
+  .h5 {
+    margin: 0 0 0.4rem;
+    font-size: 0.95rem;
+    color: var(--tinta);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  p {
+    margin: 0.4rem 0;
+  }
+}
+
+// cards soltos (fora de grade) precisam de respiro para as folhas de trás
+section > .paper,
+main > .paper {
+  margin-bottom: 2.4rem;
+}
+
+section,
+.columns,
+.grid-4 {
+  isolation: isolate;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid;
+
+  &.fato {
+    color: var(--azul);
+    background: #eef4fa;
+  }
+  &.proposta {
+    color: var(--verde);
+    background: #edf6f2;
+  }
+  &.analise {
+    color: #6b5200;
+    background: #fdf6d9;
+    border-color: var(--amarelo);
+  }
+  &.vazio {
+    color: var(--tinta-suave);
+    background: #f4f4f2;
+    border-style: dashed;
+  }
+}
+
+.note {
+  font-size: 0.9rem;
+  color: var(--tinta-suave);
+  font-style: italic;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.6rem;
+  margin-bottom: 2.4rem;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.9rem;
+  margin-bottom: 2.4rem;
+}
