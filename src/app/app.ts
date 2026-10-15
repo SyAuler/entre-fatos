@@ -28,6 +28,7 @@ import {
 import { CandidateId, Chamber, Indicator, IncomeLine, Proposal, YearValue } from './models';
 import { PaperStack, TearSide, shuffledPostitColors, shuffledTearSides } from './paper-stack';
 import { SourceLinks } from './source-links';
+import { Divida } from './divida';
 
 type Role = 'base' | 'independente' | 'oposicao' | 'pendente';
 
@@ -42,7 +43,7 @@ interface BlocView {
 @Component({
   selector: 'app-root',
   host: { '(window:scroll)': 'onScroll()' },
-  imports: [SourceLinks, PaperStack],
+  imports: [SourceLinks, PaperStack, Divida],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

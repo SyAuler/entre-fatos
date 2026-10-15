@@ -1,0 +1,376 @@
+// Gráficos da dívida pública. Cores dos fatores validadas para daltonismo e contraste;
+// "outros" é cinza de propósito: é o resto da conta, não um fator com nome.
+:host {
+  display: block;
+  margin: 1rem 0;
+
+  --c-juros: #2a66ad;
+  --c-primario: #d9a21b;
+  --c-pib: #2f8f62;
+  --c-outros: #a3acb4;
+}
+
+.scroll {
+  overflow-x: auto;
+  margin: 0.4rem 0;
+
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 680px;
+    height: auto;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+}
+
+.chart-hint {
+  display: none;
+  margin: 0.4rem 0 -0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+// ---------- gráfico de dois andares ----------
+.band {
+  fill: #fdf3cf;
+}
+
+.floor {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  fill: var(--tinta-suave);
+}
+
+.grid {
+  stroke: var(--linha);
+  stroke-width: 1;
+
+  &.zero {
+    stroke: var(--tinta);
+    stroke-width: 1.5;
+  }
+}
+
+.tick {
+  font-size: 15px;
+  text-anchor: end;
+  fill: var(--tinta-suave);
+}
+
+.year {
+  font-size: 15px;
+  text-anchor: middle;
+  fill: var(--tinta-suave);
+
+  &.on {
+    font-weight: 700;
+    fill: var(--tinta);
+  }
+}
+
+line.gov {
+  stroke: var(--verde);
+  stroke-width: 2;
+}
+
+text.gov {
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--verde);
+}
+
+.area {
+  fill: var(--azul);
+  opacity: 0.07;
+}
+
+.stroke {
+  fill: none;
+  stroke: var(--azul);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dot {
+  fill: var(--azul);
+  stroke: #fff;
+  stroke-width: 2;
+
+  &.recent {
+    fill: #fff;
+    stroke: var(--azul);
+    stroke-width: 3;
+  }
+  &.on {
+    stroke: var(--amarelo);
+    stroke-width: 4;
+  }
+}
+
+.val {
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--tinta-suave);
+
+  &.start {
+    text-anchor: start;
+  }
+  &.end {
+    text-anchor: end;
+  }
+  &.on {
+    font-size: 18px;
+    font-weight: 700;
+    fill: var(--tinta);
+  }
+}
+
+// rótulos de direção dentro do andar das barras
+.dir {
+  font-size: 14px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 4px;
+
+  &.up {
+    fill: #8a5a00;
+  }
+  &.down {
+    fill: var(--verde);
+  }
+}
+
+.seg {
+  // 2px de folga branca entre os pedaços empilhados
+  stroke: #fff;
+  stroke-width: 2;
+
+  &.juros {
+    fill: var(--c-juros);
+  }
+  &.primario {
+    fill: var(--c-primario);
+  }
+  &.pib {
+    fill: var(--c-pib);
+  }
+  &.outros {
+    fill: var(--c-outros);
+  }
+}
+
+.net {
+  fill: var(--tinta);
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+
+.hit {
+  fill: transparent;
+  cursor: pointer;
+  outline: none;
+
+  &:focus-visible {
+    stroke: var(--amarelo);
+    stroke-width: 3;
+  }
+}
+
+// ---------- legenda e amostras de cor ----------
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.3rem;
+  margin: 0.8rem 0 0.2rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+}
+
+.sw {
+  flex: none;
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 3px;
+
+  &.juros {
+    background: var(--c-juros);
+  }
+  &.primario {
+    background: var(--c-primario);
+  }
+  &.pib {
+    background: var(--c-pib);
+  }
+  &.outros {
+    background: var(--c-outros);
+  }
+  &.line {
+    width: 1.4rem;
+    height: 0;
+    border-top: 3px solid var(--azul);
+    border-radius: 0;
+  }
+  &.net {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--tinta);
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 3px var(--tinta-suave);
+  }
+}
+
+// ---------- painel "O que aconteceu" ----------
+.panel {
+  margin: 0.6rem 0 1.6rem;
+  padding: 1rem 1.2rem;
+  background: #f4f8fb;
+  border: 1px solid #d6e2ec;
+  border-left: 5px solid var(--azul);
+  border-radius: 6px;
+
+  h4 {
+    margin: 0.1rem 0 0.2rem;
+    font-family: Georgia, serif;
+    font-size: 1.25rem;
+    color: var(--azul);
+  }
+
+  p {
+    margin: 0.3rem 0;
+  }
+}
+
+.panel-kicker {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+}
+
+.forces {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 1.6rem;
+  margin: 0.6rem 0 0.2rem;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    font-size: 0.95rem;
+
+    .sw {
+      transform: translateY(0.05rem);
+    }
+
+    // o porquê de cada cor, em letra menor embaixo do nome
+    small {
+      display: block;
+      margin-top: 0.1rem;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: var(--tinta-suave);
+    }
+
+    strong {
+      margin-left: auto;
+      font-family: Georgia, serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &.none {
+      color: var(--tinta-suave);
+    }
+  }
+}
+
+.force-head {
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  &.up {
+    color: #8a5a00;
+  }
+  &.down {
+    color: var(--verde);
+  }
+}
+
+.force-head {
+  border-bottom: 1px solid #d6e2ec;
+}
+
+.context {
+  padding-top: 0.5rem;
+  border-top: 1px dashed #c7d6e2;
+  font-size: 0.95rem;
+}
+
+.panel-hint {
+  font-size: 0.8rem;
+  color: var(--tinta-suave);
+}
+
+.how {
+  margin: 0.8rem 0 0;
+  font-size: 0.9rem;
+
+  summary {
+    width: fit-content;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--verde);
+  }
+
+  ul {
+    margin: 0.4rem 0 0;
+    padding: 0.5rem 0.75rem 0.5rem 1.6rem;
+    background: #fffdf5;
+    border-left: 3px solid var(--amarelo);
+  }
+
+  li + li {
+    margin-top: 0.3rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .chart-hint {
+    display: block;
+  }
+}
+
+@media (max-width: 560px) {
+  .forces {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    padding: 0.9rem;
+  }
+}
