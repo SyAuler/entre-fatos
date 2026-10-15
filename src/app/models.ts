@@ -94,6 +94,10 @@ export interface Indicator {
   format?: 'pct' | 'reais';
   /** Gráfico de linhas em vez de barras: várias séries, em valores de hoje e da época. */
   lines?: IncomeLine[];
+  /** Gráfico próprio no lugar das barras: 'divida' = linha + fatores da variação. */
+  chart?: 'divida';
+  /** Passos curtos de "Como ler este gráfico", para quem não está acostumado com gráficos. */
+  howToRead: string[];
   series: YearValue[];
   cannotConclude: string[];
   sources: SourceReference[];
@@ -108,4 +112,20 @@ export interface IncomeLine {
   real: number[];
   /** Em reais da época. */
   nominal: number[];
+}
+
+/**
+ * O que fez a dívida bruta mudar num ano, em pontos do PIB (cálculo do site). A soma
+ * dos quatro dá a variação entre um dezembro e o seguinte.
+ */
+export interface DebtFactorYear {
+  year: number;
+  /** Juros nominais apropriados no ano. */
+  juros: number;
+  /** Resultado primário: positivo = déficit, negativo = superávit. */
+  primario: number;
+  /** Efeito do crescimento do PIB em reais (sempre negativo quando o PIB cresce). */
+  pib: number;
+  /** O que sobra: câmbio, empréstimos a bancos públicos, operações do Banco Central etc. */
+  outros: number;
 }

@@ -1,4 +1,4 @@
-import { Candidate, Chamber, Indicator, Scenario } from './models';
+import { Candidate, Chamber, DebtFactorYear, Indicator, Scenario } from './models';
 import { S, UPDATED_AT, src } from './fontes';
 
 export { UPDATED_AT } from './fontes';
@@ -187,7 +187,8 @@ export const SCENARIOS: Scenario[] = [
   },
 ];
 
-const gov = (y: number): string =>
+/** Quem governava em cada ano (2016 teve dois presidentes). Só rotula o período. */
+export const gov = (y: number): string =>
   y <= 2010
     ? 'Lula'
     : y <= 2015
@@ -211,6 +212,11 @@ export const INDICATORS: Indicator[] = [
     description:
       'Quanto os preços subiram, em média, ao longo de cada ano. É a medida oficial de inflação do país.',
     latest: { label: '12 meses até set/2026', value: '4,58%' },
+    howToRead: [
+      'Cada barra é um ano. Quanto mais alta, mais os preços subiram naquele ano.',
+      'Barra mais baixa que a anterior não quer dizer que as coisas ficaram mais baratas: só que subiram mais devagar.',
+      'A faixa verde embaixo mostra quem governava em cada período. Ela só situa o tempo, não aponta culpados.',
+    ],
     series: series(
       2003,
       [
@@ -233,6 +239,11 @@ export const INDICATORS: Indicator[] = [
     description:
       'A taxa que o Banco Central usa para frear ou estimular a economia. Serve de base para os juros de empréstimos, financiamentos e aplicações.',
     latest: { label: 'decisão do Copom de 16/09/2026', value: '13,75%' },
+    howToRead: [
+      'Cada barra mostra a taxa básica de juros em vigor no último dia do ano.',
+      'Barra alta: crédito mais caro e economia freada para segurar a inflação. Barra baixa: crédito mais barato.',
+      'Compare com o gráfico da inflação: os juros costumam subir logo depois que a inflação sobe.',
+    ],
     series: series(
       2003,
       [
@@ -255,6 +266,11 @@ export const INDICATORS: Indicator[] = [
     description:
       'Parcela das pessoas que procuram trabalho e não encontram. A série atual do IBGE começa em 2012.',
     latest: { label: 'trimestre até ago/2026', value: '5,3%' },
+    howToRead: [
+      'Cada barra mostra, de cada 100 pessoas que trabalham ou procuram trabalho, quantas estão sem emprego. Exemplo: 5,1 é cerca de 5 em cada 100.',
+      'Aqui, barra mais baixa é melhor.',
+      'Os valores são do trimestre que termina em dezembro, para comparar sempre a mesma época do ano.',
+    ],
     series: series(
       2012,
       [6.9, 6.2, 6.6, 9.1, 12.1, 11.9, 11.7, 11.1, 14.2, 11.1, 7.9, 7.4, 6.2, 5.1],
@@ -265,6 +281,43 @@ export const INDICATORS: Indicator[] = [
       'Emprego alto com juros altos (Selic a 13,75%) pode conviver com famílias endividadas e sensação de aperto.',
     ],
     sources: [S.sidraPnad, S.acessaPnad],
+  },
+  {
+    id: 'divida',
+    title: 'Dívida pública',
+    unit: '% do PIB, em dezembro de cada ano',
+    description:
+      'Quanto o governo (União, estados e municípios) deve, comparado com tudo o que o país produz em um ano, o PIB. Uma dívida de 80% do PIB quer dizer que ela equivale a quase 10 meses de toda a produção do país.',
+    latest: { label: 'ago/2026', value: '82,9%' },
+    chart: 'divida',
+    howToRead: [
+      'A linha mostra o tamanho da dívida comparado com o PIB. Linha subindo quer dizer que a dívida cresceu mais rápido que a economia.',
+      'Toque ou passe o mouse num ano para ver, logo abaixo do gráfico, o que fez a dívida subir ou cair naquele ano.',
+      '“1 ponto” é 1% do PIB, hoje cerca de R$ 134 bilhões. A dívida de 82,9% do PIB equivale a uns R$ 11 trilhões.',
+    ],
+    series: series(
+      2006,
+      [
+        55.48, 56.72, 55.98, 59.21, 51.77, 51.27, 53.67, 51.54, 56.28, 65.5, 69.84, 73.72, 75.27,
+        74.44, 86.94, 77.31, 71.68, 73.83, 76.27, 78.64,
+      ],
+    ),
+    cannotConclude: [
+      'A conta tem dois lados: a dívida em cima e o PIB embaixo. Ela sobe quando o governo gasta mais do que arrecada e com os juros, e cai quando o PIB cresce, inclusive pela inflação, que aumenta o PIB em reais.',
+      'O pico de 2020 reflete a pandemia: gastos de emergência e queda do PIB ao mesmo tempo. A queda de 2021 e 2022 veio em boa parte da inflação alta daqueles anos, que inflou o PIB em reais.',
+      'Juros altos fazem a dívida crescer sozinha, e a Selic é decidida pelo Banco Central, não pelo presidente (veja o gráfico dos juros, mais acima). Mas o tamanho da dívida também pesa na decisão dos juros: um alimenta o outro.',
+      'Não há um número mágico a partir do qual o país quebra. Países ricos devem mais, mas pagam juros bem menores. O FMI usa outro conceito, que inclui títulos na carteira do Banco Central, e chega a um número maior que o do gráfico.',
+    ],
+    sources: [
+      S.sgsDivida,
+      S.sgsDividaFatores,
+      S.sgsPib,
+      S.sgsPibReal,
+      S.bcbFatores2013,
+      S.bcbFiscais,
+      S.sidraIpca,
+      S.sgsSelic,
+    ],
   },
   {
     id: 'rendimento',
@@ -279,6 +332,11 @@ export const INDICATORS: Indicator[] = [
         'salário mínimo de R$ 1.621 e rendimento médio de R$ 3.777 (trimestre até ago/2026), cerca de 2,3 salários mínimos',
     },
     format: 'reais',
+    howToRead: [
+      'Cada ponto é o valor de dezembro do ano. Toque ou passe o mouse num ponto para ver o número exato.',
+      'Use “Valores de hoje” para comparar anos diferentes: a inflação já foi descontada, então linha subindo quer dizer que dá para comprar mais.',
+      '“Valores da época” mostra o número que aparecia no contracheque naquele ano.',
+    ],
     series: series(
       2012,
       [3189, 3289, 3348, 3239, 3260, 3306, 3351, 3361, 3442, 3068, 3317, 3418, 3563, 3742],
@@ -316,6 +374,53 @@ export const INDICATORS: Indicator[] = [
     sources: [S.sidraRenda, S.ipeaSalMin, S.sidraIpcaIndice],
   },
 ];
+
+/**
+ * O que fez a dívida bruta mudar de um dezembro para o outro, em pontos do PIB.
+ * Cálculo do site com séries do Banco Central: juros e primário vêm das NFSP do governo
+ * federal + estados e municípios; o efeito do PIB é a dívida do ano anterior × o
+ * crescimento do PIB em reais; "outros" é o que sobra para fechar a conta.
+ */
+export const DEBT_FACTORS: DebtFactorYear[] = [
+  { year: 2007, juros: 5.5, primario: -3.3, pib: -6.3, outros: 5.34 },
+  { year: 2008, juros: 5.6, primario: -3.3, pib: -7.1, outros: 4.06 },
+  { year: 2009, juros: 5.1, primario: -1.9, pib: -3.7, outros: 3.73 },
+  { year: 2010, juros: 5.4, primario: -2.6, pib: -8.4, outros: -1.84 },
+  { year: 2011, juros: 5.8, primario: -2.9, pib: -5.8, outros: 2.4 },
+  { year: 2012, juros: 5.0, primario: -2.2, pib: -4.7, outros: 4.3 },
+  { year: 2013, juros: 5.2, primario: -1.8, pib: -5.2, outros: -0.33 },
+  { year: 2014, juros: 5.7, primario: 0.5, pib: -4.0, outros: 2.54 },
+  { year: 2015, juros: 8.8, primario: 1.8, pib: -2.0, outros: 0.62 },
+  { year: 2016, juros: 6.5, primario: 2.5, pib: -2.9, outros: -1.76 },
+  { year: 2017, juros: 6.7, primario: 1.7, pib: -3.4, outros: -1.12 },
+  { year: 2018, juros: 6.4, primario: 1.6, pib: -4.4, outros: -2.05 },
+  { year: 2019, juros: 5.1, primario: 1.0, pib: -3.9, outros: -3.03 },
+  { year: 2020, juros: 4.3, primario: 9.3, pib: -2.2, outros: 1.1 },
+  { year: 2021, juros: 4.8, primario: -0.7, pib: -13.5, outros: -0.23 },
+  { year: 2022, juros: 5.6, primario: -1.2, pib: -8.2, outros: -1.83 },
+  { year: 2023, juros: 5.9, primario: 2.2, pib: -5.7, outros: -0.25 },
+  { year: 2024, juros: 6.3, primario: 0.3, pib: -5.2, outros: 1.04 },
+  { year: 2025, juros: 7.7, primario: 0.4, pib: -5.7, outros: -0.03 },
+];
+
+/** Dado mensal mais recente da dívida, que entra como último ponto da linha. */
+export const DEBT_LATEST = { label: 'ago/26', long: 'agosto de 2026', value: 82.87 };
+
+/**
+ * Contexto dos anos marcantes, para o painel "O que aconteceu". Só fatos sustentados
+ * pelas fontes do gráfico: IPCA, Selic, PIB real (SGS 7326), os fatores acima e o boxe do BC de 2013.
+ */
+export const DEBT_CONTEXT: Record<number, string> = {
+  2007: 'O governo fez superávit e o PIB cresceu 6,1%, mas “outros” empurrou a dívida para cima: o Banco Central comprava dólares para as reservas, e isso entra na dívida bruta. A partir de 2008, os empréstimos do Tesouro a bancos públicos, como o BNDES, também pesaram.',
+  2009: 'Crise financeira mundial: o PIB encolheu 0,1%, então quase não diluiu a dívida, e o superávit do governo ficou menor.',
+  2010: 'O PIB cresceu 7,5%, o maior avanço da série: o crescimento diluiu mais do que os juros somaram, e a dívida caiu mais de 7 pontos.',
+  2015: 'Recessão: o PIB encolheu 3,5%, a Selic subiu para 14,25% e o governo passou a gastar mais do que arrecadava. Os juros sozinhos somaram quase 9 pontos.',
+  2016: 'O PIB encolheu de novo (−3,3%) e o déficit aumentou. A Selic seguiu alta, em 13,75%.',
+  2020: 'Pandemia: os gastos de emergência levaram ao maior déficit da série, e o PIB encolheu 3,3%. Foi o maior salto da dívida desde 2006.',
+  2021: 'Inflação de 10% e PIB crescendo 4,8% fizeram o PIB em reais aumentar muito. Isso diluiu a dívida mais do que em qualquer outro ano da série.',
+  2022: 'Inflação ainda alta e superávit do governo: a dívida seguiu caindo, mesmo com a Selic subindo para 13,75%.',
+  2025: 'Com a Selic a 15% no fim do ano, os juros foram o maior peso, o maior desde 2015.',
+};
 
 export const SNAPSHOT = {
   items: [
@@ -392,7 +497,7 @@ export const UPDATES: { when: string; text: string }[] = [
   },
   {
     when: 'A cada divulgação',
-    text: 'IBGE e Banco Central publicam novos dados de inflação, juros, desemprego e renda.',
+    text: 'IBGE e Banco Central publicam novos dados de inflação, juros, dívida pública, desemprego e renda.',
   },
 ];
 

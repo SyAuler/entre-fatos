@@ -107,6 +107,36 @@ export const S = {
     'Banco Central do Brasil / SGS',
     'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=01/01/2016&dataFinal=31/12/2025',
   ),
+  sgsDivida: src(
+    'Série 13762 — Dívida bruta do governo geral (% do PIB), metodologia a partir de 2008',
+    'Banco Central do Brasil / SGS',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.13762/dados?formato=json&dataInicial=01/12/2006&dataFinal=31/08/2026',
+  ),
+  bcbFiscais: src(
+    'Estatísticas fiscais — nota mensal com a dívida do setor público',
+    'Banco Central do Brasil',
+    'https://www.bcb.gov.br/estatisticas/estatisticasfiscais',
+  ),
+  sgsDividaFatores: src(
+    'Séries 5751, 5753, 5784 e 5786 — juros nominais e resultado primário (% do PIB, 12 meses), governo federal, estados e municípios',
+    'Banco Central do Brasil / SGS',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.5751/dados?formato=json&dataInicial=01/12/2006&dataFinal=31/12/2025',
+  ),
+  sgsPib: src(
+    'Série 4382 — PIB acumulado dos últimos 12 meses, em R$ milhões',
+    'Banco Central do Brasil / SGS',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.4382/dados?formato=json&dataInicial=01/12/2006&dataFinal=30/09/2026',
+  ),
+  sgsPibReal: src(
+    'Série 7326 — PIB, variação real no ano (%)',
+    'Banco Central do Brasil / SGS (dados do IBGE)',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.7326/dados?formato=json',
+  ),
+  bcbFatores2013: src(
+    'Boxe “Fatores condicionantes da evolução da dívida bruta do governo geral” (Relatório de Inflação, mar/2013)',
+    'Banco Central do Brasil',
+    'https://www.bcb.gov.br/htms/relinf/port/2013/06/ri201306b4p.pdf',
+  ),
   lc179: src(
     'Lei Complementar 179/2021 — autonomia do Banco Central',
     'Planalto',

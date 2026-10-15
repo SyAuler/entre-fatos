@@ -1,0 +1,214 @@
+@let c = chart();
+<ul class="legend">
+  <li><i class="sw line"></i>Dívida em % do PIB</li>
+  @for (f of factors; track f.key) {
+    <li><i [class]="'sw ' + f.key"></i>{{ f.label }}</li>
+  }
+  <li><i class="sw net"></i>Quanto a dívida mudou no ano</li>
+</ul>
+<p class="chart-hint" aria-hidden="true">Deslize o gráfico para o lado para ver todos os anos →</p>
+<div class="scroll">
+  <svg
+    [attr.viewBox]="'0 0 ' + c.W + ' ' + c.H"
+    role="group"
+    aria-label="Dívida pública: em cima, quanto a dívida é em % do PIB; embaixo, o que fez ela mudar em cada ano. Escolha um ano para ver a explicação abaixo."
+  >
+    <!-- faixa do ano escolhido, atravessando os dois andares -->
+    @for (col of c.columns; track col.key) {
+      @if (selected() === col.key) {
+        <rect
+          class="band"
+          [attr.x]="col.x - c.slot / 2"
+          [attr.y]="c.lineTop - 30"
+          [attr.width]="c.slot"
+          [attr.height]="c.baseY - c.lineTop + 58"
+        />
+      }
+    }
+
+    <!-- andar de cima: quanto a dívida é -->
+    <text class="floor" [attr.x]="c.left" [attr.y]="c.lineTop - 20">
+      Quanto a dívida é (% do PIB)
+    </text>
+    @for (t of c.lineTicks; track t.label) {
+      <line
+        class="grid"
+        [attr.x1]="c.left"
+        [attr.x2]="c.W - c.right"
+        [attr.y1]="t.y"
+        [attr.y2]="t.y"
+      />
+      <text class="tick" [attr.x]="c.left - 8" [attr.y]="t.y + 5">{{ t.label }}</text>
+    }
+    <path class="area" [attr.d]="c.area" />
+    <path class="stroke" [attr.d]="c.path" />
+    @for (p of c.points; track p.key) {
+      @let on = selected() === p.key;
+      <circle
+        class="dot"
+        [class.on]="on"
+        [class.recent]="p.key === 0"
+        [attr.cx]="p.x"
+        [attr.cy]="p.y"
+        [attr.r]="on ? 8 : 5"
+      />
+      @if (on || p.key === c.peakKey || p.key === 0 || $first) {
+        <!-- o primeiro rótulo abre para a direita, e o último para a esquerda, para não sair do quadro -->
+        <text
+          class="val"
+          [class.on]="on"
+          [class.start]="$first"
+          [class.end]="$last"
+          [attr.x]="$first ? p.x - 8 : $last ? p.x + 8 : p.x"
+          [attr.y]="p.y - 16"
+        >
+          {{ pct(p.v) }}
+        </text>
+      }
+    }
+
+    <!-- andar de baixo: o que fez a dívida mudar -->
+    <text class="floor" [attr.x]="c.left" [attr.y]="c.barsTop - 20">
+      O que fez a dívida mudar no ano (pontos do PIB)
+    </text>
+    @for (t of c.barTicks; track t.label) {
+      <line
+        class="grid"
+        [class.zero]="t.zero"
+        [attr.x1]="c.left"
+        [attr.x2]="c.W - c.right"
+        [attr.y1]="t.y"
+        [attr.y2]="t.y"
+      />
+      <text class="tick" [attr.x]="c.left - 8" [attr.y]="t.y + 5">{{ t.label }}</text>
+    }
+    <text class="dir up" [attr.x]="c.labelX" [attr.y]="c.upY">▲ aumentou a dívida</text>
+    <text class="dir down" [attr.x]="c.labelX" [attr.y]="c.downY + 5">▼ diminuiu a dívida</text>
+    @for (b of c.bars; track b.year) {
+      @for (s of b.segs; track s.key) {
+        <rect
+          [class]="'seg ' + s.key"
+          [attr.x]="b.bx"
+          [attr.y]="s.y"
+          [attr.width]="c.bw"
+          [attr.height]="s.h"
+        />
+      }
+      <circle class="net" [attr.cx]="b.bx + c.bw / 2" [attr.cy]="b.netY" r="6" />
+    }
+
+    <!-- anos e governos, uma vez só, embaixo dos dois andares -->
+    @for (col of c.columns; track col.key) {
+      <text
+        class="year"
+        [class.on]="selected() === col.key"
+        [attr.x]="col.x"
+        [attr.y]="c.baseY + 20"
+      >
+        {{ col.label }}
+      </text>
+    }
+    @for (g of c.govs; track $index) {
+      <line
+        class="gov"
+        [attr.x1]="g.x1"
+        [attr.x2]="g.x2"
+        [attr.y1]="c.baseY + 36"
+        [attr.y2]="c.baseY + 36"
+      />
+      <text class="gov" [attr.y]="c.baseY + (g.parts.length > 1 ? 54 : 58)">
+        @for (part of g.parts; track $index) {
+          <tspan [attr.x]="(g.x1 + g.x2) / 2" [attr.dy]="$index ? 17 : 0">{{ part }}</tspan>
+        }
+      </text>
+    }
+
+    <!-- área de toque de cada ano: a coluna inteira, nos dois andares -->
+    @for (col of c.columns; track col.key) {
+      <rect
+        class="hit"
+        [attr.x]="col.x - c.slot / 2"
+        [attr.y]="c.lineTop - 30"
+        [attr.width]="c.slot"
+        [attr.height]="c.baseY - c.lineTop + 58"
+        tabindex="0"
+        role="button"
+        [attr.aria-pressed]="selected() === col.key"
+        [attr.aria-label]="col.aria"
+        (mouseenter)="select(col.key)"
+        (focus)="select(col.key)"
+        (click)="select(col.key)"
+      />
+    }
+  </svg>
+</div>
+
+@let e = explanation();
+<section class="panel" aria-live="polite">
+  <p class="panel-kicker">O que aconteceu</p>
+  <h4>{{ e.title }}</h4>
+  <p class="summary">{{ e.summary }}</p>
+  @if (e.up.length || e.down.length) {
+    <div class="forces">
+      <div>
+        <p class="force-head up">▲ Aumentou a dívida</p>
+        <ul>
+          @for (i of e.up; track i.key) {
+            <li>
+              <i [class]="'sw ' + i.key"></i>
+              <span
+                >{{ i.text }}<small>{{ i.why }}</small></span
+              >
+              <strong>{{ i.v }}</strong>
+            </li>
+          } @empty {
+            <li class="none">Nada neste ano.</li>
+          }
+        </ul>
+      </div>
+      <div>
+        <p class="force-head down">▼ Diminuiu a dívida</p>
+        <ul>
+          @for (i of e.down; track i.key) {
+            <li>
+              <i [class]="'sw ' + i.key"></i>
+              <span
+                >{{ i.text }}<small>{{ i.why }}</small></span
+              >
+              <strong>{{ i.v }}</strong>
+            </li>
+          } @empty {
+            <li class="none">Nada neste ano.</li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+  @if (e.context) {
+    <p class="context">{{ e.context }}</p>
+  }
+  <p class="panel-hint">Toque em outro ano no gráfico para trocar a explicação.</p>
+</section>
+
+<details class="how">
+  <summary>Como esses fatores foram calculados</summary>
+  <ul>
+    <li>
+      <strong>Juros</strong> e <strong>déficit ou superávit</strong>: somas do governo federal, dos
+      estados e dos municípios, em % do PIB, publicadas pelo Banco Central.
+    </li>
+    <li>
+      <strong>Crescimento do PIB</strong>: quanto a dívida do ano anterior “encolheria” só porque o
+      PIB em reais aumentou, com crescimento de verdade e com inflação somados.
+    </li>
+    <li>
+      <strong>Outros</strong>: o que sobra para fechar a conta. Inclui a compra de dólares para as
+      reservas, empréstimos do Tesouro a bancos públicos, câmbio e ajustes contábeis.
+    </li>
+    <li>
+      É um cálculo do site, uma aproximação: os juros publicados pelo Banco Central são calculados
+      sobre a dívida líquida, e por isso ficam um pouco abaixo dos juros da dívida bruta. A
+      diferença vai para “outros”.
+    </li>
+  </ul>
+</details>

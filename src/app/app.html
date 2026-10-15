@@ -526,9 +526,18 @@
         <p>
           @let d = descParts(ind);
           <!-- prettier-ignore -->
-          <span>{{ d[0] }}@if (d[1]) {<mark class="hl">{{ d[1] }}</mark>}{{ d[2] }}</span>
+          <span>{{ d[0] }}@if (d[1]) {<mark class="hl">{{ d[1] }}</mark>}{{ d[2] }}</span
+          >{{ ' ' }}
           <strong>Dado mais recente ({{ ind.latest.label }}): {{ ind.latest.value }}.</strong>
         </p>
+        <details class="how-read">
+          <summary><span aria-hidden="true">?</span> Como ler este gráfico</summary>
+          <ol>
+            @for (step of ind.howToRead; track $index) {
+              <li>{{ step }}</li>
+            }
+          </ol>
+        </details>
 
         @if (ind.lines; as lines) {
           <div class="mode-switch" role="group" aria-label="Como mostrar os valores">
@@ -645,6 +654,8 @@
               <li [class]="l.key"><i></i>{{ l.label }}</li>
             }
           </ul>
+        } @else if (ind.chart === 'divida') {
+          <app-divida [series]="ind.series" />
         } @else {
           <p class="chart-hint" aria-hidden="true">
             Deslize o gráfico para o lado para ver todos os anos →
@@ -715,10 +726,11 @@
         </table>
       </div>
       <p class="note">
-        “—” = sem dado na série (o desemprego atual do IBGE começa em 2012). 2016 aparece à parte
-        porque teve dois presidentes, e o período mais recente vai só até 2025. Média de um período
-        não mede só o governo: crises externas, pandemia e decisões do Banco Central também pesam
-        (veja “O que este dado não permite concluir” em cada gráfico).
+        “—” = sem dado na série (a dívida pública na metodologia atual do Banco Central começa em
+        2006, e o desemprego atual do IBGE, em 2012). 2016 aparece à parte porque teve dois
+        presidentes, e o período mais recente vai só até 2025. Média de um período não mede só o
+        governo: crises externas, pandemia e decisões do Banco Central também pesam (veja “O que
+        este dado não permite concluir” em cada gráfico).
       </p>
     </app-paper>
   </section>
