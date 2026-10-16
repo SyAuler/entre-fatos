@@ -1,10 +1,22 @@
-// Publicação na Cloudflare (Workers com arquivos estáticos). Só serve o que o `npm run build` gera:
-// não há código rodando no servidor nem banco de dados.
+// Publicação na Cloudflare (Workers com arquivos estáticos). O site é o que o `npm run build` gera.
+// O único código no servidor é o Worker em worker/, que só atende /_trilha (a contagem de visitas).
 {
   "name": "politica-sem-gritos",
   "compatibility_date": "2026-10-14",
+  "main": "worker/index.mjs",
+  // O Worker só fala com endereço público na internet.
+  "compatibility_flags": ["global_fetch_strictly_public"],
   "assets": {
-    "directory": "./dist/politica-sem-gritos/browser"
+    "directory": "./dist/politica-sem-gritos/browser",
+    "binding": "ASSETS",
+    // Só o aviso de visita passa pelo Worker. A página sai direto dos arquivos: se o Worker passar do
+    // limite diário do plano, só a contagem para e o site continua no ar.
+    "run_worker_first": ["/_trilha"]
+  },
+  // Para onde vai a contagem: o receptor das landings da Primoia, que alimenta o painel de visitas.
+  // A chave dele (TRILHA_CHAVE) é segredo do Worker e não fica no repositório. Sem ela, nada é enviado.
+  "vars": {
+    "TRILHA_URL": "https://app.primoia.ai/api/v1/trilha/landing"
   },
   // Sem log de cada visita: ele guardaria cabeçalhos e dados de rede de quem lê o site.
   "observability": {
