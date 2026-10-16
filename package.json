@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:dados": "ng test --watch=false --browsers=ChromeHeadless"
+    "test:dados": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:worker": "node --test worker/trilha.test.mjs"
   },
   "prettier": {
     "printWidth": 100,

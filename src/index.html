@@ -40,6 +40,47 @@
       content="Política sem Gritos: as propostas de Lula e Flávio Bolsonaro lado a lado, em 14 temas"
     />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!--
+      Conta a visita, só o número: no primeiro gesto de quem lê (rolar, tocar, mover o mouse, teclar),
+      um aviso para o próprio site (/_trilha) com um identificador aleatório desta página aberta, a rota,
+      o site de onde veio (o Worker guarda só o tipo: busca, rede social, direto) e se é teste.
+      Sem cookie e sem nada guardado no aparelho. O que o Worker faz com o aviso está em worker/trilha.mjs.
+    -->
+    <script>
+      (function () {
+        if (navigator.webdriver || !window.crypto || !crypto.randomUUID) return;
+        var gestos = ['pointermove', 'pointerdown', 'touchstart', 'scroll', 'keydown'];
+        var avisou = false;
+        function avisa() {
+          if (avisou) return;
+          avisou = true;
+          gestos.forEach(function (g) {
+            removeEventListener(g, avisa, true);
+          });
+          var de = '';
+          try {
+            de = document.referrer ? new URL(document.referrer).hostname : '';
+          } catch (e) {}
+          var corpo = JSON.stringify({
+            vista: crypto.randomUUID(),
+            rota: location.pathname,
+            de: de,
+            teste: /[?&]utm_source=teste\b/.test(location.search),
+          });
+          var foi = false;
+          try {
+            foi = navigator.sendBeacon('/_trilha', new Blob([corpo], { type: 'text/plain' }));
+          } catch (e) {}
+          if (!foi && window.fetch) {
+            fetch('/_trilha', { method: 'POST', body: corpo, keepalive: true }).catch(function () {});
+          }
+        }
+        gestos.forEach(function (g) {
+          addEventListener(g, avisa, { capture: true, passive: true });
+        });
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>
